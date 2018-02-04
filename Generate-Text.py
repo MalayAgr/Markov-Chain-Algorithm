@@ -1,5 +1,6 @@
 import re
 import random
+import time
 
 class Prefix(object):
 
@@ -31,7 +32,11 @@ def lookup(searchPrefix, prefixes):
             return prefix.suffixes
 
 def isDuplicate(prefixes, table):
-    pass
+
+    for prefix in table.getTable().values():
+        if prefix.prefixes == prefixes:
+            return True
+    return False
 
 def createTable(words, text):
 
@@ -42,16 +47,14 @@ def createTable(words, text):
         if index == length - 1:
             break
 
-        entry = table.addPrefix(count, word, words[index + 1])
-        occurrences = re.finditer(f'{entry.prefixes[0]} {entry.prefixes[1]}', text)
-        for occurrence in occurrences:
-            suffixBeginning = occurrence.end() + 1
-            suffix = text[suffixBeginning : text.find(' ', suffixBeginning)]
-            entry.addSuffix(suffix)
-        count += 1
-
-    for prefix in table.getTable().values():
-        prefix.getInfo()
+        if not isDuplicate([word, words[index + 1]], table):
+            entry = table.addPrefix(count, word, words[index + 1])
+            occurrences = re.finditer(f'{entry.prefixes[0]} {entry.prefixes[1]}', text)
+            for occurrence in occurrences:
+                suffixBeginning = occurrence.end() + 1
+                suffix = text[suffixBeginning : text.find(' ', suffixBeginning)]
+                entry.addSuffix(suffix)
+            count += 1
 
     return table
 
@@ -70,10 +73,12 @@ def generate(table, wordCount):
 
 def main():
     text = input("Enter seed text: ")
-    words =  text.split()
-    table = createTable(words, text)
     wordCount = int(input("Enter the number of words to be generated: "))
+    words =  text.split()
+    start = time.clock()
+    table = createTable(words, text)
     generate(table, wordCount)
+    print(time.clock() - start)
 
 
 if __name__ == '__main__':
