@@ -112,7 +112,7 @@ def createTable(words, text):
             entry = table.addPrefix(count, word, words[index + 1])
             occurrences = re.finditer(f'{entry.prefixes[0]} {entry.prefixes[1]}', text)
             for occurrence in occurrences:
-                suffixBeginning = occurrence.end() + 1
+                suffixBeginning = occurrence.end() + 1 #apparently, re.finditer() counts space
                 suffix = text[suffixBeginning : text.find(' ', suffixBeginning)]
                 entry.addSuffix(suffix)
             count += 1
