@@ -1,6 +1,5 @@
 import re
 import random
-import time
 
 class Prefix(object):
 
@@ -75,10 +74,8 @@ def main():
     text = input("Enter seed text: ")
     wordCount = int(input("Enter the number of words to be generated: "))
     words =  text.split()
-    start = time.clock()
     table = createTable(words, text)
     generate(table, wordCount)
-    print(time.clock() - start)
 
 
 if __name__ == '__main__':
