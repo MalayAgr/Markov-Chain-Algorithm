@@ -1,6 +1,7 @@
 import re
 import random
 from functools import reduce
+import time
 
 class Prefix(object):
     """
@@ -143,8 +144,14 @@ def main():
     text = input("Enter seed text: ")
     wordCount = int(input("Enter the number of words to be generated: "))
     words =  text.split()
+
+    start = time.clock()
     table = createTable(words, text)
+    print(f'Table creation for {len(words)} words: {time.clock() - start} seconds')
+
+    start = time.clock()
     generate(table, wordCount)
+    print(f'\nText generation for {wordCount} words: {time.clock() - start} seconds')
 
 
 if __name__ == '__main__':
