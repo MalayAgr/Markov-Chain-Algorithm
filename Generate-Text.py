@@ -76,10 +76,11 @@ def lookup(searchPrefix, prefixes):
          searchPrefix: The prefixes for which the suffixes need to be found.
          prefixes: The list of Prefix objects which is searched to get the suffix.
     """
-
     for prefix in prefixes:
         if searchPrefix == prefix.prefixes:
             return prefix.suffixes
+    return ['']
+
 
 def isDuplicate(prefixes, table):
     """
@@ -93,6 +94,7 @@ def isDuplicate(prefixes, table):
         if prefix.prefixes == prefixes:
             return True
     return False
+
 
 def createTable(words, text):
     """
@@ -120,6 +122,7 @@ def createTable(words, text):
 
     return table
 
+
 def generate(table, wordCount):
     """
     A function which generates random text using the result of the previous function, word for word.
@@ -133,12 +136,17 @@ def generate(table, wordCount):
     print(reduce(lambda x, y: x + " " + y, currentPrefixes), end = ' ')
 
     count = 0
-    while count < wordCount:
+    while count < wordCount - 2:
         word = random.choice(currentSuffixes)
         print(word, end = ' ')
         currentPrefixes = [currentPrefixes[1], word]
         currentSuffixes = lookup(currentPrefixes, prefixes)
+        if currentSuffixes == ['']:
+            randomPrefix = random.choice(prefixes)
+            currentPrefixes = randomPrefix.prefixes
+            currentSuffixes = randomPrefix.suffixes
         count += 1
+
 
 def main():
     text = input("Enter seed text: ")
