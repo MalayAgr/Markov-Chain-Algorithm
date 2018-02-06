@@ -112,9 +112,11 @@ def createTable(words, text):
         if index == length - 1:
             break
 
-        if not isDuplicate([word, words[index + 1]], table):
-            entry = table.addPrefix(count, word, words[index + 1])
-            occurrences = re.finditer(f'{entry.prefixes[0]} {entry.prefixes[1]}', text)
+        prefix1 = word
+        prefix2 = words[index + 1]
+        if not isDuplicate([prefix1, prefix2], table):
+            entry = table.addPrefix(count, prefix1, prefix2)
+            occurrences = re.finditer(f'{prefix1} {prefix2}', text)
             for occurrence in occurrences:
                 suffixBeginning = occurrence.end() + 1 #apparently, re.finditer() counts space
                 suffix = text[suffixBeginning : text.find(' ', suffixBeginning)]
