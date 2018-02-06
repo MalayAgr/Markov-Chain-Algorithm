@@ -76,9 +76,10 @@ def lookup(searchPrefix, prefixes):
          searchPrefix: The prefixes for which the suffixes need to be found.
          prefixes: The list of Prefix objects which is searched to get the suffix.
     """
-    index = {prefix.prefixes: prefix.suffixes for prefix in prefixes}
-    if searchPrefix in index.keys():
-        return index[searchPrefix]
+    index = ((prefix.prefixes, prefix.suffixes) for prefix in prefixes)
+    for prefix, suffix in index:
+        if searchPrefix == prefix:
+            return suffix
     return ['']
 
 
