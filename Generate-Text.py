@@ -140,15 +140,16 @@ def generate(table, wordCount):
 
     count = 0
     while count < wordCount - 2:
-        word = random.choice(currentSuffixes)
-        print(word, end = ' ')
-        currentPrefixes = [currentPrefixes[1], word]
-        currentSuffixes = lookup(currentPrefixes, prefixes)
         if currentSuffixes == ['']:
             randomPrefix = random.choice(prefixes)
             currentPrefixes = randomPrefix.prefixes
             currentSuffixes = randomPrefix.suffixes
-        count += 1
+        else:
+            word = random.choice(currentSuffixes)
+            print(word, end = ' ')
+            currentPrefixes = [currentPrefixes[1], word]
+            currentSuffixes = lookup(currentPrefixes, prefixes)
+            count += 1
 
 
 def main():
