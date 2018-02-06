@@ -90,9 +90,9 @@ def isDuplicate(prefixes, table):
          prefixes: A list whose duplicity is being checked.
          table: A Table object against which the duplicity is checked.
     """
-    for prefix in table.getTable().values():
-        if prefix.prefixes == prefixes:
-            return True
+    current = (prefix.prefixes for prefix in table.getTable().values())
+    if prefixes in current:
+        return True
     return False
 
 
