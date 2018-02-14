@@ -3,37 +3,6 @@ import random
 from functools import reduce
 import time
 
-class Prefix(object):
-    """
-    As per the algorithm, two prefixes are followed by a list of suffixes, which is being replicated over here.
-
-    Attributes:
-        prefixes: A list which contains the two prefixes for the object.
-        suffixes: A list which contains the suffixes associated with the prefixes.
-    """
-
-    def __init__(self, firstPrefix = '', secondPrefix = ''):
-        """
-        Initializes a new Prefix object.
-
-        It takes two strings as arguments and creates a prefix list out of them.
-
-        Arguments:
-             firstPrefix: The first prefix for this object.
-             secondPrefix: The second prefix for this object.
-        """
-        self.prefixes = [firstPrefix, secondPrefix]
-        self.suffixes = []
-
-    def addSuffix(self, suffix):
-        """
-        A method that takes a suffix as its parameter and adds that suffix to the suffixes list of the Prefix object.
-
-        Arguments:
-            suffix: The suffix to be added to the list.
-        """
-        self.suffixes.append(suffix)
-
 
 class Table(object):
     """
@@ -50,7 +19,7 @@ class Table(object):
         """
         self.table = {}
 
-    def addPrefix(self, number, firstPrefix, secondPrefix):
+    def addPrefix(self, prefix):
         """
         Adds a new item to the table dictionary, setting number as key and a Prefix object as the value. After adding the item, it returns that item.
 
@@ -58,8 +27,10 @@ class Table(object):
             firstPrefix: The first of the two prefixes.
             secondPrefix: The second of the two prefixes.
         """
-        self.table[number] = Prefix(firstPrefix, secondPrefix)
-        return self.table[number]
+        self.table[prefix] = []
+
+    def addSuffix(self, prefix, suffix):
+        self.table[prefix].append(suffix)
 
     def getTable(self):
         """
@@ -68,7 +39,7 @@ class Table(object):
         return self.table
 
 
-def lookup(searchPrefix, prefixes):
+def lookup(searchPrefix, table):
     """
     A function which takes a list containing two prefixes and returns the list of suffixes corresponding to the it.
 
@@ -76,10 +47,8 @@ def lookup(searchPrefix, prefixes):
          searchPrefix: The prefixes for which the suffixes need to be found.
          prefixes: The list of Prefix objects which is searched to get the suffix.
     """
-    index = ((prefix.prefixes, prefix.suffixes) for prefix in prefixes)
-    for prefix, suffix in index:
-        if searchPrefix == prefix:
-            return suffix
+    if searchPrefix in table.keys():
+        return table[searchPrefix]
     return ['']
 
 
@@ -91,8 +60,7 @@ def isDuplicate(prefixes, table):
          prefixes: A list whose duplicity is being checked.
          table: A Table object against which the duplicity is checked.
     """
-    current = (prefix.prefixes for prefix in table.getTable().values())
-    if prefixes in current:
+    if prefixes in table.getTable().keys():
         return True
     return False
 
@@ -112,18 +80,18 @@ def createTable(words, text):
         if index == length - 1:
             break
 
-        prefix1 = word
-        prefix2 = words[index + 1]
-        if not isDuplicate([prefix1, prefix2], table):
-            entry = table.addPrefix(count, prefix1, prefix2)
-            occurrences = re.finditer(f'{prefix1} {prefix2}', text)
+        prefix = f'{word} {words[index + 1]}'
+        if not isDuplicate(prefix, table):
+            table.addPrefix(prefix)
+            occurrences = re.finditer(prefix, text)
             for occurrence in occurrences:
                 suffixBeginning = occurrence.end() + 1 #apparently, re.finditer() counts space
                 suffix = text[suffixBeginning : text.find(' ', suffixBeginning)]
-                entry.addSuffix(suffix)
+                table.addSuffix(prefix, suffix)
+
             count += 1
 
-    return table
+    return table.getTable()
 
 
 def generate(table, wordCount):
@@ -134,21 +102,21 @@ def generate(table, wordCount):
          table: The prefixes and corresponding suffixes which will be used to produce the text.
          wordCount: The number of words that need to be generated.
     """
-    prefixes = list(table.getTable().values())
-    currentPrefixes, currentSuffixes = prefixes[0].prefixes, prefixes[0].suffixes
-    print(reduce(lambda x, y: x + " " + y, currentPrefixes), end = ' ')
+    items = list(table.items())
+    currentPrefixes, currentSuffixes = items[0]
+    print(currentPrefixes, end = ' ')
 
     count = 0
     while count < wordCount - 2:
-        if currentSuffixes == ['']:
-            randomPrefix = random.choice(prefixes)
-            currentPrefixes = randomPrefix.prefixes
-            currentSuffixes = randomPrefix.suffixes
+        if currentSuffixes == [''] or currentSuffixes == []:
+            randomPrefix = random.choice(items)
+            currentPrefixes = randomPrefix[0]
+            currentSuffixes = randomPrefix[1]
         else:
             word = random.choice(currentSuffixes)
             print(word, end = ' ')
-            currentPrefixes = [currentPrefixes[1], word]
-            currentSuffixes = lookup(currentPrefixes, prefixes)
+            currentPrefixes = f'{currentPrefixes.split()[1]} {word}'
+            currentSuffixes = lookup(currentPrefixes, table)
             count += 1
 
 
