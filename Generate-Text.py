@@ -29,6 +29,13 @@ class Table(object):
         self.table[prefix] = []
 
     def addSuffix(self, prefix, suffix):
+        """
+        Adds a new suffix to the list associated with a prefix in the dictionary
+
+        Arguments:
+             prefix: The key in the list of which the suffix needs to be added
+             suffix: The suffix to be added
+        """
         self.table[prefix].append(suffix)
 
     def getTable(self):
@@ -44,7 +51,7 @@ def lookup(searchPrefix, table):
 
     Arguments:
          searchPrefix: The prefixes for which the suffixes need to be found.
-         prefixes: The list of Prefix objects which is searched to get the suffix.
+         prefixes: The dictionary containing the prefixes and their suffixes
     """
     if searchPrefix in table.keys():
         return table[searchPrefix]
