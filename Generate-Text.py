@@ -1,6 +1,5 @@
 import re
 import random
-from functools import reduce
 import time
 
 
