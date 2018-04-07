@@ -91,8 +91,9 @@ def createTable(words, text):
             table.addPrefix(prefix)
             occurrences = re.finditer(prefix, text)
             for occurrence in occurrences:
-                suffixBeginning = occurrence.end() + 1 #apparently, re.finditer() counts space
-                suffix = text[suffixBeginning : text.find(' ', suffixBeginning)]
+                # apparently, re.finditer() counts space
+                suffixBeginning = occurrence.end() + 1
+                suffix = text[suffixBeginning:text.find(' ', suffixBeginning)]
                 table.addSuffix(prefix, suffix)
 
             count += 1
@@ -110,7 +111,7 @@ def generate(table, wordCount):
     """
     items = list(table.items())
     currentPrefixes, currentSuffixes = items[0]
-    print(currentPrefixes, end = ' ')
+    print(currentPrefixes, end=' ')
 
     count = 0
     while count < wordCount - 2:
@@ -120,7 +121,7 @@ def generate(table, wordCount):
             currentSuffixes = randomPrefix[1]
         else:
             word = random.choice(currentSuffixes)
-            print(word, end = ' ')
+            print(word, end=' ')
             currentPrefixes = f'{currentPrefixes.split()[1]} {word}'
             currentSuffixes = lookup(currentPrefixes, table)
             count += 1
@@ -129,7 +130,7 @@ def generate(table, wordCount):
 def main():
     text = input("Enter seed text: ")
     wordCount = int(input("Enter the number of words to be generated: "))
-    words =  text.split()
+    words = text.split()
 
     start = time.clock()
     table = createTable(words, text)
